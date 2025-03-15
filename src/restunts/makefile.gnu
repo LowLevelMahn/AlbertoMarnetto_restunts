@@ -3,14 +3,7 @@
 # 
 #   choco install make
 # 
-# C:\cygwin64\usr\test_bin\bin\make.exe
-# C:\FPC\3.2.2\bin\i386-win32\make.exe
-# C:\ProgramData\chocolatey\bin\make.exe
 # C:\ProgramData\chocolatey\lib\make\tools\install\bin\make.exe <-- copied this one
-# C:\user\bin\make.exe
-# C:\Users\All Users\chocolatey\bin\make.exe
-# C:\Users\All Users\chocolatey\lib\make\tools\install\bin\make.exe
-# 
 # its a recent make 4.4.1
 # 
 # make -f makefile.gnu CONFIG=debug ASSEMBLER=tasmbox
@@ -57,16 +50,21 @@ endif
 
 MAKE_PARAMS = CONFIG=$(CONFIG) ASSEMBLER=$(ASSEMBLER) LINKER=$(LINKER)
 
-asm:
-	cd asm && make -f makefile.gnu $(MAKE_PARAMS) && cd ..
+all: restunts
 
-c:
-	cd c && make -f makefile.gnu $(MAKE_PARAMS) && cd ..
+asm: force_me
+	make -C asm -f makefile.gnu $(MAKE_PARAMS)
+
+c: force_me
+	make -C c -f makefile.gnu $(MAKE_PARAMS)
 
 restunts: asm c
-	cd dos && make -f makefile.gnu $(MAKE_PARAMS) && cd ..
-	cd ..
+	make -C dos -f makefile.gnu $(MAKE_PARAMS)
 
 clean:
-	@cd asm && make -f makefile.gnu $(MAKE_PARAMS) clean && cd ..
-	@cd c && make -f makefile.gnu $(MAKE_PARAMS) clean && cd ..
+	make -C asm -f makefile.gnu $(MAKE_PARAMS) clean
+	make -C c -f makefile.gnu $(MAKE_PARAMS) clean
+	make -C dos -f makefile.gnu $(MAKE_PARAMS) clean
+
+# i have no idea why i need to force pre-targets with an empty target
+force_me: ;

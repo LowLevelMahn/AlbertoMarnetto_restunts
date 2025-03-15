@@ -13,7 +13,6 @@ copy %SRC_CFG% %DST_CFG% >nul
   echo SET PATH=%%PATH%%;s:\tools\bin
   echo cd %CD%
   echo tlink %* ^>tlinkbox.out
-  echo pause
   echo if ERRORLEVEL 0 goto noerror
   echo type tlinkbox.out
   echo pause
@@ -21,10 +20,8 @@ copy %SRC_CFG% %DST_CFG% >nul
   echo exit
 ) >> %DST_CFG%
 
-dosbox -conf %DST_CFG%
-
-rem set SDL_VIDEODRIVER=dummy
-rem dosbox -conf %DST_CFG% -noconsole
+set SDL_VIDEODRIVER=dummy
+dosbox -conf %DST_CFG% -noconsole
 
 del %DST_CFG% 2>nul
 type tlinkbox.out
