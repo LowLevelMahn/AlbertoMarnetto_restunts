@@ -57,16 +57,67 @@ endif
 
 MAKE_PARAMS = CONFIG=$(CONFIG) ASSEMBLER=$(ASSEMBLER) LINKER=$(LINKER)
 
-asm:
-	cd asm && make -f makefile.gnu $(MAKE_PARAMS) && cd ..
+define run_make
+  @cd $(1) && make -f makefile.gnu $(make_cmd) && cd ..
+endef
 
-c:
-	cd c && make -f makefile.gnu $(MAKE_PARAMS) && cd ..
+# list of files
+files =file1.c file2.c file3.c file4.c
 
-restunts: asm c
-	cd dos && make -f makefile.gnu $(MAKE_PARAMS) && cd ..
+sep=$(space)
+ifeq ($(LINKER),wlink)
+  sep=,
+else ifneq ($(findstring $(LINKER),$(BORLAND_LINKERS)),)
+  sep=+
+else
+  $(error can't define sep)
+endif
+
+# replaces space with $(sep)
+subst_files = $(subst $(space),$(sep),$(files))
+
+tasm32_exe="../../tools/bin/tasm32.exe"
+
+# leeres echo mit . ergibt ein newline - da darf nur nix drueber/drunter stehen
+
+define my_func
+	@echo.
+	@echo "Hallo, $(1)!"
+endef
+
+# print result
+info:
+	@echo "make_cmd: $(make_cmd)"
+	@echo "CONFIG: $(CONFIG)"
+	@echo "ASSEMBLER: $(ASSEMBLER)"
+	@echo "LINKER: $(LINKER)"
+	@echo "files: $(files)"
+	@echo "subst_files: $(subst_files)"
+#	$(tasm32_exe)
+	$(call my_func,Welt)
+	$(call my_func123,Tralala)
+
+asmorig:
+	cd asmorig
+	make -f makefile.gnu $(MAKE_PARAMS)
 	cd ..
 
 clean:
-	@cd asm && make -f makefile.gnu $(MAKE_PARAMS) clean && cd ..
-	@cd c && make -f makefile.gnu $(MAKE_PARAMS) clean && cd ..
+#	cd dos
+#	make -f makefile.gnu clean
+#	cd ..
+#	cd c
+#	make -f makefile.gnu clean
+#	cd ..
+#	cd asm
+#	make -f makefile.gnu clean
+#	cd ..
+	cd asmorig
+	make -f makefile.gnu clean
+	cd ..
+#	cd sdl
+#	make -f makefile.gnu clean
+#	cd ..
+#	cd repldump
+#	make -f makefile.gnu clean
+#	cd ..

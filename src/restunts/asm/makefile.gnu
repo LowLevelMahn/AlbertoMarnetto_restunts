@@ -1,4 +1,8 @@
+# example:
+# make -f makefile.gnu ASSEMBLER=tasm32
+
 TARGET ?= dos
+
 ifneq ($(TARGET),dos)
   $(error Unsupported TARGET: $(TARGET))
 endif
@@ -21,7 +25,6 @@ ASM_FILES = segments.asm seg000.asm seg001.asm seg002.asm seg003.asm seg004.asm 
             seg034.asm seg035.asm seg036.asm seg037.asm seg038.asm seg039.asm seg041.asm dseg.asm
 
 OBJ_FILES = $(addprefix $(OBJDIR)/, $(ASM_FILES:.asm=.obj))
-OBJ_FILES_BACKSLASH = $(subst /,\,$(OBJ_FILES))
 
 TFLAGS = /zn
 ifeq ($(CONFIG),debug)
@@ -30,9 +33,11 @@ endif
 
 ASM = $(ASSEMBLER) /m2 /s $(TFLAGS)
 
+INCLUDES = structs.inc
+
 all: $(OBJ_FILES)
 
-$(OBJDIR)/%.obj: %.asm
+$(OBJDIR)/%.obj: %.asm $(INCLUDES)
   # asm file name
 	$(eval ASM_FILE = $<)
   # obj filepath (slash replaced with backslash for tasmx)
@@ -41,4 +46,4 @@ $(OBJDIR)/%.obj: %.asm
 	$(ASM) $(ASM_FILE), $(OBJ_FILE)
 
 clean:
-	del $(OBJ_FILES_BACKSLASH)
+	del $(OBJDIR)\*.obj
